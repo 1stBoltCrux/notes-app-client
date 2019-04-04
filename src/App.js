@@ -1,11 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import Routes from "./Routes";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { Nav, Navbar, NavItem } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-
-
-
+import { Auth } from "aws-amplify";
 
 import './App.css';
 
@@ -14,15 +12,34 @@ class App extends Component {
     super(props);
     this.state = {
       isAuthenticated: false,
+      isAuthenticating: true,
     }
+  }
+
+  async componentDidMount() {
+    try {
+
+      await Auth.currentSession();
+      this.userHasAuthenticated(true)
+
+    } catch(e) {
+      if (e !== 'No current user') {
+        alert(e);
+      }
+    }
+
+    this.setState({ isAuthenticating: false })
   }
 
   userHasAuthenticated = authenticated => {
     this.setState({isAuthenticated: authenticated})
   }
 
-  handleLogout = event => {
+  handleLogout = async event => {
+    await Auth.signOut();
     this.userHasAuthenticated(false)
+
+    this.props.history.push("/login");
   }
 
   render() {
@@ -32,6 +49,7 @@ class App extends Component {
       userHasAuthenticated: this.userHasAuthenticated,
     }
   return (
+    !this.state.isAuthenticating &&
     <div className="App container">
       <Navbar fluid collapseOnSelect>
         <Navbar.Header>
@@ -62,4 +80,4 @@ class App extends Component {
 }
 }
 
-export default App;
+export default withRouter(App);
