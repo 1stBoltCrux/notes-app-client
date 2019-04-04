@@ -19,7 +19,7 @@ export default class Signup extends Component {
       password: "",
       confirmPassword: "",
       confirmationCode: "",
-      newUser: null
+      newUser: null,
     };
   }
 
@@ -55,6 +55,11 @@ export default class Signup extends Component {
       newUser
     });
   } catch (e) {
+    //if user refreshes during confirmation or they already have a username but are not confirmed, sends new confirmation email, displays confirmation page
+    if (e.code == "UsernameExistsException") {
+      this.setState({newUser: 'temporary user'})
+      Auth.resendSignUp(this.state.email)
+    }
     alert(e.message);
   }
 
