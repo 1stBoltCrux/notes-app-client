@@ -27,7 +27,7 @@ Amplify.configure({
     endpoints: [
       {
         // TELLING AMPLIFY WHAT WE WANT TO NAME OUR API, ALLOWS FOR MULTIPLE APIS
-        name: "dev-notes-app-api",
+        name: "notes",
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION
       },
