@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { API, Storage } from "aws-amplify";
 import { s3Upload } from "../libs/awsLib";
-
 import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import config from "../config";
@@ -70,6 +69,7 @@ saveNote(note) {
 }
 
 handleSubmit = async event => {
+  console.log(this.state.note)
   let attachment;
 
   event.preventDefault();
@@ -84,12 +84,16 @@ handleSubmit = async event => {
   try {
     if (this.file) {
       attachment = await s3Upload(this.file);
+
     }
 
     await this.saveNote({
       content: this.state.content,
       attachment: attachment || this.state.note.attachment
     });
+    // removes previous file from s3
+    await Storage.remove(this.state.note.attachment, {level: 'private'});
+    
     this.props.history.push("/");
   } catch (e) {
     alert(e);
