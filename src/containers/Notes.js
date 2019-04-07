@@ -69,7 +69,7 @@ saveNote(note) {
 }
 
 handleSubmit = async event => {
-  console.log(this.state.note)
+
   let attachment;
 
   event.preventDefault();
@@ -93,7 +93,7 @@ handleSubmit = async event => {
     });
     // removes previous file from s3
     await Storage.remove(this.state.note.attachment, {level: 'private'});
-    
+
     this.props.history.push("/");
   } catch (e) {
     alert(e);
@@ -103,9 +103,17 @@ handleSubmit = async event => {
 
 
 
+deleteNote() {
+  return API.del("notes", `/notes/${this.props.match.params.id}`);
+  }
+
+  deleteAttachment() {
+
+  }
+
 handleDelete = async event => {
   event.preventDefault();
-
+  console.log(this.state.note);
   const confirmed = window.confirm(
     "Are you sure you want to delete this note?"
   );
@@ -115,7 +123,19 @@ handleDelete = async event => {
   }
 
   this.setState({ isDeleting: true });
+
+  try {
+    await this.deleteNote();
+    if (this.state.note.attachment) {
+    await Storage.remove(this.state.note.attachment, {level: 'private'});
+    }
+    this.props.history.push("/");
+  } catch (e) {
+    alert(e);
+    this.setState({ isDeleting: false });
+  }
 }
+
 
 render() {
   return (
