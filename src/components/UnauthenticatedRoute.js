@@ -5,7 +5,6 @@ function querystring(name, url = window.location.href) {
   name = name.replace(/[[]]/g, "\\$&");
   const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)", "i");
   const results = regex.exec(url);
-  console.log(results)
 
   if (!results) {
     return null;
@@ -32,3 +31,5 @@ export default ({ component: C, props: cProps, ...rest }) => {
     />
   );
 };
+
+aws s3 sync build/ s3://teds-notes-app-client
